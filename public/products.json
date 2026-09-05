@@ -3,7 +3,7 @@
     "name": "Precisou e nem sabia",
     "subtitle": "Produtos úteis que valem uma olhada"
   },
-  "updated_at": "2026-09-04T22:11:02-03:00",
+  "updated_at": "2026-09-05T11:52:06-03:00",
   "products": [
     {
       "code": "01",
@@ -63,6 +63,33 @@
       "availability_checked_at": "2026-09-04T22:11:02-03:00",
       "catalog_http_status": 200,
       "offers_http_status": 200
+    },
+    {
+      "code": "03",
+      "product_id": "MLB73945552",
+      "title": "Blocos de Montar Magnético 80 Peças Criativo Mundo De Cubo Construção 3d Infantil Educativo Brinquedo Nanotoyzzz",
+      "short_description": "Blocos magnéticos para montar estruturas, explorar a criatividade e criar diferentes construções.",
+      "price": 54.9,
+      "currency": "BRL",
+      "price_checked_at": "2026-09-05",
+      "affiliate_url": "https://meli.la/27EWRic",
+      "ml_public_id": "",
+      "image_url": "https://http2.mlstatic.com/D_NQ_NP_952988-MLA113311241438_072026-F.jpg",
+      "badges": [],
+      "active": true,
+      "featured": false,
+      "affiliate_item_id": "MLB6988891986",
+      "validated_item_id": "MLB6988891986",
+      "source_batch": "BATCH_008",
+      "source_batch_order": "4",
+      "source_pipeline_status": "DRAFT",
+      "affiliate_link_updated_at": "2026-09-05T11:25:45-03:00",
+      "catalog_title": "Blocos de Montar Magnético 80 Peças Criativo Mundo De Cubo Construção 3d Infantil Educativo Brinquedo Nanotoyzzz",
+      "price_sync_status": "EXACT_AFFILIATE_ITEM",
+      "availability_checked_at": "2026-09-05T11:26:40-03:00",
+      "catalog_http_status": 200,
+      "offers_http_status": 200,
+      "availability_status": "EXACT_ITEM_ACTIVE"
     }
   ]
 }
