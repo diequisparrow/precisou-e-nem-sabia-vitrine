@@ -1,0 +1,68 @@
+{
+  "brand": {
+    "name": "Precisou e nem sabia",
+    "subtitle": "Produtos úteis que valem uma olhada"
+  },
+  "updated_at": "2026-09-04T22:11:02-03:00",
+  "products": [
+    {
+      "code": "01",
+      "product_id": "MLB65973789",
+      "title": "Aspirador portátil 3 em 1 para carro e teclado",
+      "short_description": "Compacto, sem fio e pensado para limpezas rápidas em carro, teclado e cantinhos.",
+      "price": 24.99,
+      "currency": "BRL",
+      "price_checked_at": "2026-09-04",
+      "affiliate_url": "https://meli.la/2MHL6JT",
+      "affiliate_links": {
+        "variant_A": "https://meli.la/2MHL6JT",
+        "variant_B": "https://meli.la/2BwUitP",
+        "variant_C": "https://meli.la/1kn1N3t"
+      },
+      "ml_public_id": "XQEWJG-DKXE",
+      "image_url": "https://http2.mlstatic.com/D_NQ_NP_752805-MLA111156017870_052026-F.jpg",
+      "badges": [
+        "3 em 1",
+        "Sem fio",
+        "USB"
+      ],
+      "active": true,
+      "featured": true,
+      "price_sync_status": "FIXED_PRICE",
+      "fixed_price": 24.99,
+      "catalog_title": "Aspirador Portátil 3 Em 1 Com Soprador e Filtro HEPA Para Carro e Teclado USB",
+      "availability_status": "CATALOG_ACTIVE",
+      "availability_checked_at": "2026-09-04T22:11:01-03:00",
+      "catalog_http_status": 200,
+      "offers_http_status": 200
+    },
+    {
+      "code": "02",
+      "product_id": "MLB54357967",
+      "affiliate_item_id": "MLB5150940899",
+      "title": "Fone Bluetooth para capacete com RGB",
+      "short_description": "Headset sem fio para capacete, com Bluetooth 5.3, iluminação RGB, redução de ruído e bateria de até 16 horas.",
+      "price": 39.97,
+      "currency": "BRL",
+      "price_checked_at": "2026-09-04",
+      "affiliate_url": "https://meli.la/19PRJo1",
+      "ml_public_id": "XQEWJG-NE6C",
+      "channel": "tiktok",
+      "image_url": "https://http2.mlstatic.com/D_NQ_NP_705128-MLA116671814177_082026-F.jpg",
+      "badges": [
+        "Bluetooth 5.3",
+        "RGB",
+        "Até 16h"
+      ],
+      "active": true,
+      "featured": false,
+      "catalog_title": "Fone De Ouvido Para Capacete Moto Bluetooth Motoboy Headset Rgb Sem Fio Kateluo",
+      "price_sync_status": "EXACT_AFFILIATE_ITEM",
+      "validated_item_id": "MLB5150940899",
+      "availability_status": "EXACT_ITEM_ACTIVE",
+      "availability_checked_at": "2026-09-04T22:11:02-03:00",
+      "catalog_http_status": 200,
+      "offers_http_status": 200
+    }
+  ]
+}

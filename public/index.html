@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#111111" />
+  <meta name="description" content="Produtos úteis dos nossos vídeos, com acesso direto ao Mercado Livre." />
+  <title>Precisou e nem sabia</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <div class="brand-mark">P</div>
+      <div class="hero-copy">
+        <p class="eyebrow">VITRINE DOS VÍDEOS</p>
+        <h1 id="brandName">Precisou e nem sabia</h1>
+        <p id="brandSubtitle">Produtos úteis que valem uma olhada</p>
+      </div>
+    </header>
+
+    <section class="search-section" aria-label="Pesquisar produtos">
+      <div class="search-box">
+        <span aria-hidden="true">⌕</span>
+        <input
+          id="searchInput"
+          type="search"
+          placeholder="Busque pelo produto ou código..."
+          autocomplete="off"
+        />
+      </div>
+      <p class="search-help">
+        Viu um código no vídeo? Digite aqui, por exemplo <strong>01</strong>.
+      </p>
+    </section>
+
+    <main>
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">SELECIONADOS</p>
+          <h2>Produtos dos vídeos</h2>
+        </div>
+        <span id="productCount" class="count-pill">0 produtos</span>
+      </div>
+
+      <section id="productGrid" class="product-grid" aria-live="polite"></section>
+
+      <div id="emptyState" class="empty-state hidden">
+        <div class="empty-icon">⌕</div>
+        <h3>Nenhum produto encontrado</h3>
+        <p>Tente buscar pelo nome ou pelo código mostrado no vídeo.</p>
+      </div>
+    </main>
+
+    <footer>
+      <p>
+        Os preços podem mudar no Mercado Livre. Alguns links desta página são links de afiliado:
+        podemos receber comissão pela compra, sem custo adicional para você.
+      </p>
+    </footer>
+  </div>
+
+  <template id="productTemplate">
+    <article class="product-card">
+      <div class="product-media">
+        <img class="product-image hidden" alt="" loading="lazy" />
+        <div class="image-placeholder">
+          <span class="placeholder-code"></span>
+          <small>Imagem do produto</small>
+        </div>
+
+        <div class="card-topline">
+          <span class="product-code"></span>
+          <span class="featured-badge hidden">DESTAQUE</span>
+        </div>
+      </div>
+
+      <div class="product-body">
+        <div class="badges"></div>
+        <h3 class="product-title"></h3>
+        <p class="product-description"></p>
+
+        <div class="price-row">
+          <div>
+            <span class="price-label">Preço visto</span>
+            <strong class="product-price"></strong>
+          </div>
+          <span class="price-note"></span>
+        </div>
+
+        <a class="buy-button" target="_blank" rel="noopener noreferrer sponsored">
+          <span>Ver no Mercado Livre</span>
+          <span aria-hidden="true">→</span>
+        </a>
+
+        <button class="copy-code-button" type="button">
+          <span>Copiar código do Mercado Livre</span>
+          <strong class="ml-code"></strong>
+        </button>
+      </div>
+    </article>
+  </template>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>
