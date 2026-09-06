@@ -3,7 +3,6 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -22,27 +21,62 @@ ML_API = "https://api.mercadolibre.com"
 TIMEOUT = 25
 
 
-def carregar_env() -> None:
+def resolver_env_file() -> Path | None:
     """
-    Usa, nesta ordem:
-    1) caminho indicado por AFFILIATE_AI_ENV_FILE;
-    2) .env da raiz deste repositório.
+    Ordem de procura:
+    1) AFFILIATE_AI_ENV_FILE informado explicitamente;
+    2) .env da própria vitrine;
+    3) projeto Affiliate_AI ao lado deste repositório;
+    4) ~/Documents/Affiliate_AI/.env.
 
-    Assim podemos sincronizar localmente usando o .env do projeto
-    Affiliate_AI sem copiar segredos para o repositório da vitrine.
+    Nunca copia segredos para a vitrine.
     """
+    candidates: list[Path] = []
+
     env_override = os.getenv("AFFILIATE_AI_ENV_FILE")
 
-    env_path = (
-        Path(env_override)
-        if env_override
-        else ENV_FILE
+    if env_override:
+        candidates.append(Path(env_override).expanduser())
+
+    candidates.extend(
+        [
+            ENV_FILE,
+            PROJECT_ROOT.parent / "Affiliate_AI" / ".env",
+            Path.home() / "Documents" / "Affiliate_AI" / ".env",
+        ]
     )
 
-    load_dotenv(
-        env_path,
-        override=True,
-    )
+    seen: set[str] = set()
+
+    for candidate in candidates:
+        try:
+            resolved = candidate.resolve()
+        except Exception:
+            resolved = candidate
+
+        key = str(resolved).lower()
+
+        if key in seen:
+            continue
+
+        seen.add(key)
+
+        if candidate.is_file():
+            return candidate
+
+    return None
+
+
+def carregar_env() -> Path | None:
+    env_path = resolver_env_file()
+
+    if env_path:
+        load_dotenv(
+            env_path,
+            override=True,
+        )
+
+    return env_path
 
 
 def obter_ml_token() -> str | None:
@@ -90,26 +124,15 @@ def agora_iso() -> str:
 def get_json(
     url: str,
 ) -> tuple[int, Any]:
-    """
-    Replica a mesma autenticação já usada pelo Auto Pipeline.
-
-    Os endpoints /products/{id} e /products/{id}/items podem exigir
-    Authorization: Bearer em algumas chamadas/contas.
-    """
     token = obter_ml_token()
 
     headers = {
-        "User-Agent":
-            "AffiliateAI-Vitrine/1.2",
-
-        "Accept":
-            "application/json",
+        "User-Agent": "AffiliateAI-Vitrine/1.3",
+        "Accept": "application/json",
     }
 
     if token:
-        headers[
-            "Authorization"
-        ] = f"Bearer {token}"
+        headers["Authorization"] = f"Bearer {token}"
 
     response = requests.get(
         url,
@@ -117,24 +140,17 @@ def get_json(
         headers=headers,
     )
 
-    # Mantém o mesmo fallback do pipeline principal.
+    # Mantém o fallback do pipeline principal.
     if (
         token
-        and response.status_code
-        in (
-            401,
-            403,
-        )
+        and response.status_code in (401, 403)
     ):
         response = requests.get(
             url,
             timeout=TIMEOUT,
             headers={
-                "User-Agent":
-                    "AffiliateAI-Vitrine/1.2",
-
-                "Accept":
-                    "application/json",
+                "User-Agent": "AffiliateAI-Vitrine/1.3",
+                "Accept": "application/json",
             },
         )
 
@@ -164,7 +180,7 @@ def extrair_imagem_catalogo(payload: Any) -> str:
             "secure_url",
             "url",
         ):
-            value = (
+            value = str(
                 picture.get(key)
                 or ""
             ).strip()
@@ -211,7 +227,6 @@ def normalizar_ofertas(payload: Any) -> list[dict[str, Any]]:
                 if isinstance(item, dict)
             ]
 
-    # Alguns formatos podem trazer o próprio payload como oferta.
     if any(
         key in payload
         for key in (
@@ -255,14 +270,6 @@ def escolher_oferta(
     *,
     affiliate_item_id: str = "",
 ) -> tuple[dict[str, Any] | None, str]:
-    """
-    Preço de vitrine deve corresponder ao anúncio/link afiliado.
-
-    Se affiliate_item_id estiver configurado, usamos exatamente essa oferta.
-    Caso contrário NÃO usamos automaticamente a oferta mais barata do catálogo,
-    porque ela pode ser de outro vendedor/anúncio e gerar divergência com o link.
-    """
-
     affiliate_item_id = str(
         affiliate_item_id
         or ""
@@ -410,36 +417,41 @@ def sincronizar_produto(
         availability_status = "UNAVAILABLE_HTTP"
 
     if not dry_run:
-        if image_url:
-            product["image_url"] = image_url
-
-        if catalog_title:
-            product["catalog_title"] = catalog_title
-
-        fixed_price = product.get("fixed_price")
-
-        if fixed_price is not None:
-            product["price"] = float(fixed_price)
-            product["price_sync_status"] = "FIXED_PRICE"
-
-        elif current_price is not None and affiliate_item_id:
-            product["price"] = current_price
-            product["price_checked_at"] = datetime.now().date().isoformat()
-            product["price_sync_status"] = "EXACT_AFFILIATE_ITEM"
-
-        else:
-            product["price_sync_status"] = price_sync_status
-
-        if current_item_id:
-            product["validated_item_id"] = current_item_id
+        # Sempre registra a tentativa, sem destruir o último estado válido.
+        product["last_sync_attempt_at"] = agora_iso()
+        product["last_sync_catalog_http_status"] = catalog_status
+        product["last_sync_offers_http_status"] = offers_status
+        product["last_sync_status"] = availability_status
 
         if not api_transient_error:
-            product["active"] = available
+            if image_url:
+                product["image_url"] = image_url
 
-        product["availability_status"] = availability_status
-        product["availability_checked_at"] = agora_iso()
-        product["catalog_http_status"] = catalog_status
-        product["offers_http_status"] = offers_status
+            if catalog_title:
+                product["catalog_title"] = catalog_title
+
+            fixed_price = product.get("fixed_price")
+
+            if fixed_price is not None:
+                product["price"] = float(fixed_price)
+                product["price_sync_status"] = "FIXED_PRICE"
+
+            elif current_price is not None and affiliate_item_id:
+                product["price"] = current_price
+                product["price_checked_at"] = datetime.now().date().isoformat()
+                product["price_sync_status"] = "EXACT_AFFILIATE_ITEM"
+
+            else:
+                product["price_sync_status"] = price_sync_status
+
+            if current_item_id:
+                product["validated_item_id"] = current_item_id
+
+            product["active"] = available
+            product["availability_status"] = availability_status
+            product["availability_checked_at"] = agora_iso()
+            product["catalog_http_status"] = catalog_status
+            product["offers_http_status"] = offers_status
 
     display_price = (
         float(product.get("fixed_price"))
@@ -464,9 +476,14 @@ def sincronizar_produto(
         "price_sync_status": (
             "FIXED_PRICE"
             if product.get("fixed_price") is not None
-            else price_sync_status
+            else (
+                product.get("price_sync_status")
+                if api_transient_error
+                else price_sync_status
+            )
         ),
         "availability_status": availability_status,
+        "transient_error": api_transient_error,
     }
 
 
@@ -491,8 +508,7 @@ def main() -> None:
 
     if not PRODUCTS_FILE.exists():
         raise FileNotFoundError(
-            f"Arquivo não encontrado: "
-            f"{PRODUCTS_FILE}"
+            f"Arquivo não encontrado: {PRODUCTS_FILE}"
         )
 
     data = carregar_json(
@@ -513,27 +529,23 @@ def main() -> None:
             "'products' precisa ser uma lista."
         )
 
-    print(
-        "=" * 72
-    )
+    print("=" * 72)
+    print("VITRINE V1.3 - SYNC MERCADO LIVRE")
+    print("=" * 72)
+    print(f"Produtos: {len(products)}")
+    print(f"Dry-run: {args.dry_run}")
 
-    print(
-        "VITRINE V1.2 - SYNC MERCADO LIVRE AUTENTICADO"
-    )
-
-    print(
-        "=" * 72
-    )
-
-    print(
-        f"Produtos: {len(products)}"
-    )
-
-    print(
-        f"Dry-run: {args.dry_run}"
-    )
-
+    env_file = resolver_env_file()
     ml_token = obter_ml_token()
+
+    print(
+        "Env ML: "
+        + (
+            str(env_file)
+            if env_file
+            else "NÃO encontrado"
+        )
+    )
 
     print(
         "Token ML: "
@@ -546,8 +558,7 @@ def main() -> None:
 
     if not ml_token:
         print(
-            "⚠ A sincronização pode receber 401/403. "
-            "O Auto Pipeline usa um token ML do .env."
+            "⚠ Sem token ML. A consulta pode receber 401/403."
         )
 
     print()
@@ -612,7 +623,7 @@ def main() -> None:
             if price is not None:
                 print(
                     "  preço   : "
-                    f"R$ {price:.2f}"
+                    f"R$ {float(price):.2f}"
                 )
 
             if result.get(
@@ -643,6 +654,11 @@ def main() -> None:
                 print(
                     "  disponibilidade:",
                     availability_status,
+                )
+
+            if result.get("transient_error"):
+                print(
+                    "  ⚠ erro transitório: último estado válido preservado"
                 )
 
         print()
