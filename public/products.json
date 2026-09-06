@@ -3,7 +3,7 @@
     "name": "Precisou e nem sabia",
     "subtitle": "Produtos úteis que valem uma olhada"
   },
-  "updated_at": "2026-09-05T11:52:06-03:00",
+  "updated_at": "2026-09-06T21:19:55+00:00",
   "products": [
     {
       "code": "01",
@@ -32,9 +32,13 @@
       "fixed_price": 24.99,
       "catalog_title": "Aspirador Portátil 3 Em 1 Com Soprador e Filtro HEPA Para Carro e Teclado USB",
       "availability_status": "CATALOG_ACTIVE",
-      "availability_checked_at": "2026-09-04T22:11:01-03:00",
+      "availability_checked_at": "2026-09-06T21:19:54+00:00",
       "catalog_http_status": 200,
-      "offers_http_status": 200
+      "offers_http_status": 200,
+      "last_sync_attempt_at": "2026-09-06T21:19:54+00:00",
+      "last_sync_catalog_http_status": 200,
+      "last_sync_offers_http_status": 200,
+      "last_sync_status": "CATALOG_ACTIVE"
     },
     {
       "code": "02",
@@ -42,9 +46,9 @@
       "affiliate_item_id": "MLB5150940899",
       "title": "Fone Bluetooth para capacete com RGB",
       "short_description": "Headset sem fio para capacete, com Bluetooth 5.3, iluminação RGB, redução de ruído e bateria de até 16 horas.",
-      "price": 39.97,
+      "price": 38.77,
       "currency": "BRL",
-      "price_checked_at": "2026-09-04",
+      "price_checked_at": "2026-09-06",
       "affiliate_url": "https://meli.la/19PRJo1",
       "ml_public_id": "XQEWJG-NE6C",
       "channel": "tiktok",
@@ -60,9 +64,13 @@
       "price_sync_status": "EXACT_AFFILIATE_ITEM",
       "validated_item_id": "MLB5150940899",
       "availability_status": "EXACT_ITEM_ACTIVE",
-      "availability_checked_at": "2026-09-04T22:11:02-03:00",
+      "availability_checked_at": "2026-09-06T21:19:54+00:00",
       "catalog_http_status": 200,
-      "offers_http_status": 200
+      "offers_http_status": 200,
+      "last_sync_attempt_at": "2026-09-06T21:19:54+00:00",
+      "last_sync_catalog_http_status": 200,
+      "last_sync_offers_http_status": 200,
+      "last_sync_status": "EXACT_ITEM_ACTIVE"
     },
     {
       "code": "03",
@@ -71,7 +79,7 @@
       "short_description": "Blocos magnéticos para montar estruturas, explorar a criatividade e criar diferentes construções.",
       "price": 54.9,
       "currency": "BRL",
-      "price_checked_at": "2026-09-05",
+      "price_checked_at": "2026-09-06",
       "affiliate_url": "https://meli.la/27EWRic",
       "ml_public_id": "",
       "image_url": "https://http2.mlstatic.com/D_NQ_NP_952988-MLA113311241438_072026-F.jpg",
@@ -86,10 +94,14 @@
       "affiliate_link_updated_at": "2026-09-05T11:25:45-03:00",
       "catalog_title": "Blocos de Montar Magnético 80 Peças Criativo Mundo De Cubo Construção 3d Infantil Educativo Brinquedo Nanotoyzzz",
       "price_sync_status": "EXACT_AFFILIATE_ITEM",
-      "availability_checked_at": "2026-09-05T11:26:40-03:00",
+      "availability_checked_at": "2026-09-06T21:19:55+00:00",
       "catalog_http_status": 200,
       "offers_http_status": 200,
-      "availability_status": "EXACT_ITEM_ACTIVE"
+      "availability_status": "EXACT_ITEM_ACTIVE",
+      "last_sync_attempt_at": "2026-09-06T21:19:55+00:00",
+      "last_sync_catalog_http_status": 200,
+      "last_sync_offers_http_status": 200,
+      "last_sync_status": "EXACT_ITEM_ACTIVE"
     }
   ]
 }
