@@ -3,7 +3,7 @@
     "name": "Precisou e nem sabia",
     "subtitle": "Produtos úteis que valem uma olhada"
   },
-  "updated_at": "2026-09-12T04:43:02+00:00",
+  "updated_at": "2026-09-12T12:13:18+00:00",
   "products": [
     {
       "code": "01",
@@ -32,10 +32,10 @@
       "fixed_price": 24.99,
       "catalog_title": "Aspirador Portátil 3 Em 1 Com Soprador e Filtro HEPA Para Carro e Teclado USB",
       "availability_status": "CATALOG_ACTIVE",
-      "availability_checked_at": "2026-09-12T04:43:02+00:00",
+      "availability_checked_at": "2026-09-12T12:13:17+00:00",
       "catalog_http_status": 200,
       "offers_http_status": 200,
-      "last_sync_attempt_at": "2026-09-12T04:43:02+00:00",
+      "last_sync_attempt_at": "2026-09-12T12:13:17+00:00",
       "last_sync_catalog_http_status": 200,
       "last_sync_offers_http_status": 200,
       "last_sync_status": "CATALOG_ACTIVE"
@@ -64,10 +64,10 @@
       "price_sync_status": "EXACT_AFFILIATE_ITEM",
       "validated_item_id": "MLB5150940899",
       "availability_status": "EXACT_ITEM_ACTIVE",
-      "availability_checked_at": "2026-09-12T04:43:02+00:00",
+      "availability_checked_at": "2026-09-12T12:13:18+00:00",
       "catalog_http_status": 200,
       "offers_http_status": 200,
-      "last_sync_attempt_at": "2026-09-12T04:43:02+00:00",
+      "last_sync_attempt_at": "2026-09-12T12:13:18+00:00",
       "last_sync_catalog_http_status": 200,
       "last_sync_offers_http_status": 200,
       "last_sync_status": "EXACT_ITEM_ACTIVE"
@@ -94,11 +94,11 @@
       "affiliate_link_updated_at": "2026-09-05T11:25:45-03:00",
       "catalog_title": "Blocos de Montar Magnético 80 Peças Criativo Mundo De Cubo Construção 3d Infantil Educativo Brinquedo Nanotoyzzz",
       "price_sync_status": "EXACT_AFFILIATE_ITEM",
-      "availability_checked_at": "2026-09-12T04:43:02+00:00",
+      "availability_checked_at": "2026-09-12T12:13:18+00:00",
       "catalog_http_status": 200,
       "offers_http_status": 200,
       "availability_status": "EXACT_ITEM_ACTIVE",
-      "last_sync_attempt_at": "2026-09-12T04:43:02+00:00",
+      "last_sync_attempt_at": "2026-09-12T12:13:18+00:00",
       "last_sync_catalog_http_status": 200,
       "last_sync_offers_http_status": 200,
       "last_sync_status": "EXACT_ITEM_ACTIVE"
@@ -123,14 +123,14 @@
       "source_batch_order": "1",
       "source_pipeline_status": "PENDING",
       "affiliate_link_updated_at": "2026-09-07T08:12:09-03:00",
-      "last_sync_attempt_at": "2026-09-12T04:43:02+00:00",
+      "last_sync_attempt_at": "2026-09-12T12:13:18+00:00",
       "last_sync_catalog_http_status": 200,
       "last_sync_offers_http_status": 200,
       "last_sync_status": "EXACT_ITEM_ACTIVE",
       "catalog_title": "Microfone Lapela Mymotors Preto Sem Fio Tipo C",
       "price_sync_status": "EXACT_AFFILIATE_ITEM",
       "availability_status": "EXACT_ITEM_ACTIVE",
-      "availability_checked_at": "2026-09-12T04:43:02+00:00",
+      "availability_checked_at": "2026-09-12T12:13:18+00:00",
       "catalog_http_status": 200,
       "offers_http_status": 200
     }
