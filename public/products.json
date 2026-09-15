@@ -164,6 +164,37 @@
       "availability_checked_at": "2026-09-14T20:20:34+00:00",
       "catalog_http_status": 200,
       "offers_http_status": 200
+    },
+    {
+      "code": "06",
+      "product_id": "MLB25656186",
+      "title": "Patinete Infantil 3 Rodas com Led/Dobrável Menino/Menina",
+      "short_description": "Produto selecionado nos nossos vídeos. Confira os detalhes e a oferta atual no Mercado Livre.",
+      "price": 54.9,
+      "currency": "BRL",
+      "price_checked_at": "2026-09-14",
+      "affiliate_url": "https://meli.la/1PA2JL8",
+      "ml_public_id": "",
+      "image_url": "https://http2.mlstatic.com/D_NQ_NP_944838-MLA99549576346_122025-F.jpg",
+      "badges": [],
+      "active": true,
+      "featured": false,
+      "affiliate_item_id": "MLB3399022201",
+      "validated_item_id": "MLB3399022201",
+      "source_batch": "MANUAL_MLB25656186",
+      "source_batch_order": "1",
+      "source_pipeline_status": "PENDING",
+      "affiliate_link_updated_at": "2026-09-14T05:52:46-03:00",
+      "last_sync_attempt_at": "2026-09-14T05:52:51-03:00",
+      "last_sync_catalog_http_status": 200,
+      "last_sync_offers_http_status": 200,
+      "last_sync_status": "EXACT_ITEM_ACTIVE",
+      "catalog_title": "Patinete Infantil 3 Rodas com Led/Dobrável Menino/Menina",
+      "price_sync_status": "EXACT_AFFILIATE_ITEM",
+      "availability_status": "EXACT_ITEM_ACTIVE",
+      "availability_checked_at": "2026-09-14T05:52:51-03:00",
+      "catalog_http_status": 200,
+      "offers_http_status": 200
     }
   ]
 }

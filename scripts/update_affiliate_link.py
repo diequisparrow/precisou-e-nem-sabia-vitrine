@@ -718,6 +718,322 @@ def validar_pos_sync(
     return product
 
 
+def git_command(
+    *args: str,
+    check: bool = True,
+) -> subprocess.CompletedProcess[str]:
+    completed = subprocess.run(
+        [
+            "git",
+            *args,
+        ],
+        cwd=str(PROJECT_ROOT),
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    if completed.stdout:
+        print(
+            completed.stdout.rstrip()
+        )
+
+    if completed.stderr:
+        print(
+            completed.stderr.rstrip()
+        )
+
+    if (
+        check
+        and completed.returncode != 0
+    ):
+        raise subprocess.CalledProcessError(
+            completed.returncode,
+            [
+                "git",
+                *args,
+            ],
+            output=completed.stdout,
+            stderr=completed.stderr,
+        )
+
+    return completed
+
+
+def git_tracked_worktree_clean() -> bool:
+    completed = git_command(
+        "status",
+        "--porcelain",
+        "--untracked-files=no",
+    )
+
+    return not completed.stdout.strip()
+
+
+def git_prepare_before_edit() -> None:
+    if not git_tracked_worktree_clean():
+        raise RuntimeError(
+            "A vitrine possui alterações rastreadas não commitadas. "
+            "A publicação automática foi interrompida para não sobrescrever trabalho local."
+        )
+
+    print()
+    print(
+        "[GIT] Atualizando referência remota antes de editar..."
+    )
+
+    git_command(
+        "fetch",
+        "origin",
+        "main",
+    )
+
+    divergence = git_command(
+        "rev-list",
+        "--left-right",
+        "--count",
+        "HEAD...origin/main",
+    )
+
+    raw = divergence.stdout.strip().split()
+
+    if len(raw) != 2:
+        raise RuntimeError(
+            "Não foi possível determinar a divergência entre HEAD e origin/main."
+        )
+
+    local_ahead = int(
+        raw[0]
+    )
+    remote_ahead = int(
+        raw[1]
+    )
+
+    if remote_ahead <= 0:
+        print(
+            "[GIT] Repositório já está sincronizado com origin/main."
+        )
+        return
+
+    print(
+        "[GIT] origin/main está à frente. "
+        f"local_ahead={local_ahead}, remote_ahead={remote_ahead}"
+    )
+
+    rebase = git_command(
+        "rebase",
+        "origin/main",
+        check=False,
+    )
+
+    if rebase.returncode != 0:
+        git_command(
+            "rebase",
+            "--abort",
+            check=False,
+        )
+
+        raise RuntimeError(
+            "Não foi possível atualizar a vitrine antes da edição. "
+            "O rebase foi abortado automaticamente para preservar o estado local."
+        )
+
+    print(
+        "[GIT] Rebase prévio concluído."
+    )
+
+
+def produto_por_id(
+    data: dict[str, Any],
+    product_id: str,
+) -> dict[str, Any]:
+    products = data.get(
+        "products",
+        [],
+    )
+
+    if not isinstance(
+        products,
+        list,
+    ):
+        raise RuntimeError(
+            "products.json inválido: 'products' precisa ser uma lista."
+        )
+
+    product = localizar_produto(
+        products,
+        product_id,
+    )
+
+    if product is None:
+        raise RuntimeError(
+            f"{product_id} não encontrado em products.json."
+        )
+
+    return json.loads(
+        json.dumps(
+            product,
+            ensure_ascii=False,
+        )
+    )
+
+
+def aplicar_produto_desejado(
+    desired_product: dict[str, Any],
+) -> None:
+    data = carregar_json(
+        PRODUCTS_FILE
+    )
+
+    products = data.get(
+        "products",
+        [],
+    )
+
+    if not isinstance(
+        products,
+        list,
+    ):
+        raise RuntimeError(
+            "products.json inválido: 'products' precisa ser uma lista."
+        )
+
+    product_id = str(
+        desired_product.get(
+            "product_id"
+        )
+        or ""
+    ).strip().upper()
+
+    existing = localizar_produto(
+        products,
+        product_id,
+    )
+
+    if existing is None:
+        products.append(
+            desired_product
+        )
+    else:
+        index = products.index(
+            existing
+        )
+
+        products[
+            index
+        ] = desired_product
+
+    data[
+        "updated_at"
+    ] = agora_iso()
+
+    salvar_json(
+        PRODUCTS_FILE,
+        data,
+    )
+
+
+def git_resolve_products_conflict(
+    desired_product: dict[str, Any],
+) -> None:
+    conflicts = git_command(
+        "diff",
+        "--name-only",
+        "--diff-filter=U",
+    )
+
+    conflicted = {
+        line.strip().replace(
+            "\\",
+            "/",
+        )
+        for line in conflicts.stdout.splitlines()
+        if line.strip()
+    }
+
+    if conflicted != {
+        "public/products.json"
+    }:
+        raise RuntimeError(
+            "Rebase encontrou conflito fora de public/products.json: "
+            + ", ".join(
+                sorted(
+                    conflicted
+                )
+            )
+        )
+
+    print(
+        "[GIT] Conflito esperado em products.json. "
+        "Preservando remoto + produto local."
+    )
+
+    git_command(
+        "checkout",
+        "--ours",
+        "--",
+        "public/products.json",
+    )
+
+    aplicar_produto_desejado(
+        desired_product
+    )
+
+    git_command(
+        "add",
+        "public/products.json",
+    )
+
+    continued = git_command(
+        "-c",
+        "core.editor=true",
+        "rebase",
+        "--continue",
+        check=False,
+    )
+
+    if continued.returncode != 0:
+        raise RuntimeError(
+            "Falha ao continuar o rebase automático após resolver products.json."
+        )
+
+
+def git_rebase_preservando_produto(
+    desired_product: dict[str, Any],
+) -> None:
+    git_command(
+        "fetch",
+        "origin",
+        "main",
+    )
+
+    rebase = git_command(
+        "rebase",
+        "origin/main",
+        check=False,
+    )
+
+    if rebase.returncode == 0:
+        print(
+            "[GIT] Rebase automático concluído sem conflito."
+        )
+        return
+
+    try:
+        git_resolve_products_conflict(
+            desired_product
+        )
+
+    except Exception:
+        git_command(
+            "rebase",
+            "--abort",
+            check=False,
+        )
+
+        raise
+
+
 def git_commit_product(
     product_id: str,
     *,
@@ -772,13 +1088,75 @@ def git_commit_product(
     return True
 
 
-def git_push() -> None:
-    executar(
-        [
-            "git",
+def git_push_with_retry(
+    product_id: str,
+    *,
+    max_attempts: int = 3,
+) -> None:
+    desired_product = produto_por_id(
+        carregar_json(
+            PRODUCTS_FILE
+        ),
+        product_id,
+    )
+
+    for attempt in range(
+        1,
+        max_attempts + 1,
+    ):
+        print()
+        print(
+            f"[GIT] Push tentativa {attempt}/{max_attempts}..."
+        )
+
+        push = git_command(
             "push",
-        ],
-        cwd=PROJECT_ROOT,
+            "origin",
+            "main",
+            check=False,
+        )
+
+        if push.returncode == 0:
+            print(
+                "[GIT] Push concluído."
+            )
+            return
+
+        combined = (
+            (push.stdout or "")
+            + "\n"
+            + (push.stderr or "")
+        ).lower()
+
+        retryable = any(
+            marker in combined
+            for marker in (
+                "fetch first",
+                "non-fast-forward",
+                "rejected",
+            )
+        )
+
+        if (
+            not retryable
+            or attempt >= max_attempts
+        ):
+            raise RuntimeError(
+                "git push falhou e não foi possível concluir "
+                "a publicação automática."
+            )
+
+        print(
+            "[GIT] origin/main avançou durante a publicação. "
+            "Sincronizando e tentando novamente..."
+        )
+
+        git_rebase_preservando_produto(
+            desired_product
+        )
+
+    raise RuntimeError(
+        "Número máximo de tentativas de push atingido."
     )
 
 
@@ -885,6 +1263,12 @@ def main() -> None:
         affiliate_root,
         args.batch_file,
     )
+
+    if (
+        not args.dry_run
+        and not args.no_git
+    ):
+        git_prepare_before_edit()
 
     data = carregar_json(
         PRODUCTS_FILE
@@ -1069,14 +1453,17 @@ def main() -> None:
                 commit_created
                 and not args.no_push
             ):
-                git_push()
+                git_push_with_retry(
+                    product_id
+                )
 
     except Exception:
         if commit_created:
             print()
             print(
                 "✗ Falha após o commit local. "
-                "O commit foi preservado; corrija a causa e rode git push novamente."
+                "O commit foi preservado. "
+                "A rotina automática de sincronização/push não conseguiu concluir."
             )
         else:
             shutil.copy2(
